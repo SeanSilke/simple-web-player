@@ -1,9 +1,8 @@
-function reqListener () {
-  console.log(this);
-}
+window.addEventListener('input', function (event) {
+    event.preventDefault();
+    console.log("keyup event detected! coming from this element:", event.target);
+}, false);
 
-var oReq = new XMLHttpRequest();
-oReq.responseType = 'arraybuffer'
-oReq.onload = reqListener;
-oReq.open("get", "samples/indigo jam unit - Roots.mp3", true);
-oReq.send();
+var handleFiles = function(e){
+    console.log(e[0].name, e[0].type);
+};
