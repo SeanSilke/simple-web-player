@@ -1,29 +1,35 @@
 var context;
 var soundBuffer = null;
+var source ;
 
 window.addEventListener('load', init, false);
 
 function init() {
-  try {
-    // Fix up for prefixing
-    window.AudioContext = window.AudioContext||window.webkitAudioContext;
-    context = new AudioContext();
-  }
-  catch(e) {
-    alert('Web Audio API is not supported in this browser');
-  }
+    try {
+        context = new (window.AudioContext || window.webkitAudioContext);
+    }
+    catch (e) {
+        alert('Web Audio API is not supported in this browser');
+    }
+    aReq.send();
 }
 
-function loadSound(url) {
-  var request = new XMLHttpRequest();
-  request.open('GET', url, true);
-  request.responseType = 'arraybuffer';
+var aReq = new XMLHttpRequest();
+aReq.responseType = 'arraybuffer'
+aReq.onload = reqListener;
+aReq.open("get", "samples/Onze-20 - Joao e Grazi.mp3", true);
 
-  // Decode asynchronously
-  request.onload = function() {
-    context.decodeAudioData(request.response, function(buffer) {
-      soundBuffer = buffer;
-    }, onError);
-  }
-  request.send();
+
+function reqListener() {
+    context.decodeAudioData(aReq.response, function (buffer) {
+        soundBuffer = buffer;
+        playSound(soundBuffer)
+    });
+}
+
+function playSound(buffer) {
+    source = context.createBufferSource();
+    source.buffer = soundBuffer;
+    source.connect(context.destination);
+    source.start(0);
 }
