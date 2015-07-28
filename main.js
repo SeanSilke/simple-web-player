@@ -10,6 +10,20 @@ var stop = document.querySelector('.stop');
 var play = document.querySelector('.play');
 ///
 
+var fillTheBuffer = function(url){
+    var aReq = new XMLHttpRequest();
+    aReq.responseType = 'arraybuffer'
+    aReq.onload = reqListener;
+    aReq.open("get", url, true);
+    aReq.send();
+    function reqListener() {
+        context.decodeAudioData(aReq.response, function (buffer) {
+            soundBuffer = buffer
+            source.buffer = soundBuffer;
+        });
+    }
+}
+
 var getData = function () {
     source = context.createBufferSource();
     gainNode = context.createGain();
@@ -20,17 +34,7 @@ var getData = function () {
     if (soundBuffer) {
         source.buffer = soundBuffer;
     } else {
-        var aReq = new XMLHttpRequest();
-        aReq.responseType = 'arraybuffer'
-        aReq.onload = reqListener;
-        aReq.open("get", "samples/Onze-20 - Joao e Grazi.mp3", true);
-        aReq.send();
-        function reqListener() {
-            context.decodeAudioData(aReq.response, function (buffer) {
-                soundBuffer = buffer
-                source.buffer = soundBuffer;
-            });
-        }
+      fillTheBuffer("samples/Onze-20 - Joao e Grazi.mp3")
     }
 }
 // wire up buttons
