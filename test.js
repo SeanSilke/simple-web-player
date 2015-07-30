@@ -1,8 +1,24 @@
-window.addEventListener('input', function (event) {
-    event.preventDefault();
-    console.log("keyup event detected! coming from this element:", event.target);
-}, false);
+var fileInput = document.querySelector('.file-input');
+var dropZone = document.querySelector('.drop-zone')
 
-var handleFiles = function(e){
-    console.log(e[0].name, e[0].type);
+//fileInput.onchange = handleFiles;
+var handleFileSelect = function (evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    var files = evt.target.files || evt.dataTransfer.files
+    var file = files[0]
+    console.log(file.name, file.type)
+
+    var reader = new FileReader();
 };
+
+function handleDragOver(evt) {
+    console.log("hi dragover")
+    evt.stopPropagation();
+    evt.preventDefault();
+    evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+}
+
+fileInput.onchange = handleFileSelect;
+dropZone.addEventListener('dragover', handleDragOver, false);
+dropZone.addEventListener('drop', handleFileSelect, false);

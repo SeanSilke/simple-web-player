@@ -1,11 +1,24 @@
 <html>
     <head>
+        <style>
+            .drop-zone {
+            border: 2px dashed #bbb;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            border-radius: 5px;
+            padding: 25px;
+            text-align: center;
+            font: 20pt bold 'Vollkorn';
+            color: #bbb;
+            }
+        </style>
     </head>
     <body>
         <h1>Simple web player</h1>
 
         <h2>Input file</h2>
-        <input type="file" id="input" onchange="handleFiles(this.files)">
+        <div class="drop-zone">Drop files here</div>
+        <input class="file-input" type="file" id="input">
 
         <h2>Control buttons</h2>
         <button class="play">Play</button>
@@ -14,6 +27,6 @@
         <h2>Volume</h2>
         <input class="volume-control" type="range" min="0" max="1" step="0.01" value="0.5">
         <script src="main.js"></script>
-        <!--<script src="test.js"></script>-->
+        <script src="test.js"></script>
     </body>
 </html>
