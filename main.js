@@ -12,7 +12,7 @@ var stop = document.querySelector('.stop');
 var play = document.querySelector('.play');
 ///
 
-var fillTheBuffer = function(url){
+var fillTheBuffer = function (url) {
     var aReq = new XMLHttpRequest();
     aReq.responseType = 'arraybuffer'
     aReq.onload = reqListener;
@@ -26,7 +26,7 @@ var fillTheBuffer = function(url){
     }
 }
 
-var getData = function () {
+var getData = function () { //!!!This function needs proper name
     source = context.createBufferSource();
     gainNode = context.createGain();
     source.connect(gainNode);
@@ -36,7 +36,7 @@ var getData = function () {
     if (soundBuffer) {
         source.buffer = soundBuffer;
     } else {
-      fillTheBuffer("samples/Onze-20 - Joao e Grazi.mp3")
+        fillTheBuffer("samples/Onze-20 - Joao e Grazi.mp3")
     }
 }
 // wire up buttons
