@@ -34,6 +34,15 @@ var fillTheBuffer = function (url) {
     }
 }
 
+
+var setSourceBuffer = function() {
+    if (soundBuffer) {
+        source.buffer = soundBuffer;
+    } else {
+        fillTheBuffer("samples/Onze-20 - Joao e Grazi.mp3")
+    }
+}
+
 var getData = function () { //!!!This function needs proper name
                             // connect nodes ? build Audio Graph ?
     source = context.createBufferSource();
@@ -42,16 +51,7 @@ var getData = function () { //!!!This function needs proper name
     analyser = context.createAnalyser()
     gainNode.connect(analyser);
     analyser.connect(context.destination);
-
-
-    if (soundBuffer) {
-        source.buffer = soundBuffer;
-    } else {
-        fillTheBuffer("samples/Onze-20 - Joao e Grazi.mp3")
-    }
-
     gainNode.gain.value = volumeControl.value;
-    requestAnimationFrame(draw);
 }
 
 var draw = function(){
@@ -95,7 +95,9 @@ volumeControl.oninput = function () {
 
 play.onclick = function () {
     getData();
+    setSourceBuffer();
     source.start(0);
+    requestAnimationFrame(draw);
     isPlaying = true;
     play.setAttribute('disabled', 'disabled');
 }
