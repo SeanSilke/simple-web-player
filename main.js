@@ -1,8 +1,8 @@
 // define variables
 var context = new (window.AudioContext || window.webkitAudioContext);
 var source;
-var gainNode;
-var analyser;
+var gainNode = context.createGain();;
+var analyser = context.createAnalyser();
 
 var soundBuffer = null;
 var isPlaying = false;
@@ -20,39 +20,26 @@ var SMOOTHING = 0.8;
 var FFT_SIZE = Math.pow(2, 7);
 ///
 
-var fillTheBuffer = function (url) {
-    var aReq = new XMLHttpRequest();
-    aReq.responseType = 'arraybuffer'
-    aReq.onload = reqListener;
-    aReq.open("get", url, true);
-    aReq.send();
-    function reqListener() {
-        context.decodeAudioData(aReq.response, function (buffer) {
-            soundBuffer = buffer
-            source.buffer = soundBuffer;
-        });
-    }
+//Connect Audio nodes
+var connectAudioNodes = function(){
+  source = context.createBufferSource();
+  source.connect(gainNode);
+  gainNode.connect(analyser);
+  analyser.connect(context.destination);
+  gainNode.gain.value = volumeControl.value;
 }
 
 
-var setSourceBuffer = function() {
+var setSound = function() {
     if (soundBuffer) {
         source.buffer = soundBuffer;
+        return true
     } else {
-        fillTheBuffer("samples/Onze-20 - Joao e Grazi.mp3")
+        alert("No audio file selected! Please select one.")
+        return false
     }
 }
 
-var getData = function () { //!!!This function needs proper name
-                            // connect nodes ? build Audio Graph ?
-    source = context.createBufferSource();
-    gainNode = context.createGain();
-    source.connect(gainNode);
-    analyser = context.createAnalyser()
-    gainNode.connect(analyser);
-    analyser.connect(context.destination);
-    gainNode.gain.value = volumeControl.value;
-}
 
 var draw = function(){
     analyser.smoothingTimeConstant = SMOOTHING;
@@ -94,12 +81,14 @@ volumeControl.oninput = function () {
 }
 
 play.onclick = function () {
-    getData();
-    setSourceBuffer();
-    source.start(0);
-    requestAnimationFrame(draw);
-    isPlaying = true;
-    play.setAttribute('disabled', 'disabled');
+    connectAudioNodes()
+    if (setSound()){
+      source.start(0);
+      requestAnimationFrame(draw);
+      isPlaying = true;
+      play.setAttribute('disabled', 'disabled');
+      stop.removeAttribute('disabled');
+    }
 }
 
 stop.onclick = function () {
@@ -114,10 +103,20 @@ var handleFileSelect = function (evt) {
     var files = evt.target.files || evt.dataTransfer.files
     var file = files[0]
 
+    var onDecodeSuccess = function(buffer){
+      soundBuffer = buffer
+    }
+
+    var onDecodeError = function(){
+      alert("Can't decode selected file. Probably it is not audio file.")
+    }
+
     function fileListener(e) {
-        context.decodeAudioData(e.target.result, function (buffer) {
-            soundBuffer = buffer
-        });
+        context.decodeAudioData(
+          e.target.result,
+          onDecodeSuccess,
+          onDecodeError
+        )
     }
 
     var reader = new FileReader();
