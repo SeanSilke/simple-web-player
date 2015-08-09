@@ -3,8 +3,6 @@ var context = new (window.AudioContext || window.webkitAudioContext);
 var source;
 var gainNode = context.createGain();;
 var analyser = context.createAnalyser();
-
-// var soundBuffer = null;
 var sound = {};
 var isPlaying = false;
 
@@ -15,23 +13,22 @@ var stop = document.querySelector('.stop');
 var play = document.querySelector('.play');
 var fileName = document.querySelector('.playing-file-name');
 
-/// constant
+/// define constants
 var WIDTH = 640;
 var HEIGHT = 360;
 var SMOOTHING = 0.8;
 var FFT_SIZE = Math.pow(2, 7);
-///
 
-//Connect Audio nodes
+// Connect audio nodes
 var connectAudioNodes = function(){
-  source = context.createBufferSource();
-  source.connect(gainNode);
-  gainNode.connect(analyser);
-  analyser.connect(context.destination);
-  gainNode.gain.value = volumeControl.value;
+    source = context.createBufferSource();
+    source.connect(gainNode);
+    gainNode.connect(analyser);
+    analyser.connect(context.destination);
+    gainNode.gain.value = volumeControl.value;
 }
 
-
+// Set up sound buffer
 var setSound = function() {
     if (sound.buffer) {
         source.buffer = sound.buffer;
@@ -42,12 +39,10 @@ var setSound = function() {
     }
 }
 
-
+// Visual effects
 var draw = function(){
     analyser.smoothingTimeConstant = SMOOTHING;
     analyser.fftSize = FFT_SIZE;
-
-    ///!!! move freqDomain out of function
     var freqDomain = new Uint8Array(analyser.frequencyBinCount);
     // Get the frequency data from the currently playing music
     analyser.getByteFrequencyData(freqDomain);
@@ -60,21 +55,21 @@ var draw = function(){
     canvas.height = HEIGHT;
     // Draw the frequency domain chart.
     for (var i = 0; i < analyser.frequencyBinCount; i++) {
-      var value = freqDomain[i];
-      var percent = value / 256;
-      var height = HEIGHT * percent;
-      var offset = HEIGHT - height - 1;
-      var barWidth = WIDTH/analyser.frequencyBinCount;
-      var hue = i/analyser.frequencyBinCount * 360;
-      drawContext.fillStyle = 'hsl(' + hue + ', 100%, 50%)';
-      drawContext.fillRect(i * barWidth, offset, barWidth, height);
+        var value = freqDomain[i];
+        var percent = value / 256;
+        var height = HEIGHT * percent;
+        var offset = HEIGHT - height - 1;
+        var barWidth = WIDTH/analyser.frequencyBinCount;
+        var hue = i/analyser.frequencyBinCount * 360;
+        drawContext.fillStyle = 'hsl(' + hue + ', 100%, 50%)';
+        drawContext.fillRect(i * barWidth, offset, barWidth, height);
     }
-  ///!!! stop if music doesn't playing
-  if(isPlaying) {
-    requestAnimationFrame(draw);
-  }else {
-    drawContext.clearRect(0, 0, canvas.width, canvas.height);
-  }
+    //Stop Visualisation of audio if player is stopped
+    if(isPlaying) {
+        requestAnimationFrame(draw);
+    }else {
+        drawContext.clearRect(0, 0, canvas.width, canvas.height);
+    }
 }
 
 // wire up buttons
@@ -85,12 +80,12 @@ volumeControl.oninput = function () {
 play.onclick = function () {
     connectAudioNodes()
     if (setSound()){
-      source.start(0);
-      requestAnimationFrame(draw);
-      isPlaying = true;
-      fileName.innerHTML = sound.name;
-      play.setAttribute('disabled', 'disabled');
-      stop.removeAttribute('disabled');
+        source.start(0);
+        requestAnimationFrame(draw);
+        isPlaying = true;
+        fileName.innerHTML = sound.name;
+        play.setAttribute('disabled', 'disabled');
+        stop.removeAttribute('disabled');
     }
 }
 
@@ -109,22 +104,22 @@ var handleFileSelect = function (evt) {
     var fileName = file.name;
 
     var onDecodeSuccess = function(buffer){
-      sound.buffer = buffer
-      sound.name = file.name
-      if(!isPlaying){
-        play.removeAttribute('disabled');
-      }
+        sound.buffer = buffer
+        sound.name = file.name
+        if(!isPlaying){
+            play.removeAttribute('disabled');
+        }
     }
 
     var onDecodeError = function(){
-      alert("Can't decode selected file. Probably it is not audio file.")
+        alert("Can't decode selected file. Probably it is not audio file.")
     }
 
     function fileListener(e) {
         context.decodeAudioData(
-          e.target.result,
-          onDecodeSuccess,
-          onDecodeError
+            e.target.result,
+            onDecodeSuccess,
+            onDecodeError
         )
     }
 
