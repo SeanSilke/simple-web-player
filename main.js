@@ -111,6 +111,9 @@ var handleFileSelect = function (evt) {
     var onDecodeSuccess = function(buffer){
       sound.buffer = buffer
       sound.name = file.name
+      if(!isPlaying){
+        play.removeAttribute('disabled');
+      }
     }
 
     var onDecodeError = function(){
