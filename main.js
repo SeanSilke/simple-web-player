@@ -4,7 +4,8 @@ var source;
 var gainNode = context.createGain();;
 var analyser = context.createAnalyser();
 
-var soundBuffer = null;
+// var soundBuffer = null;
+var sound = {};
 var isPlaying = false;
 
 var fileInput = document.querySelector('.file-input');
@@ -12,6 +13,7 @@ var dropZone = document.querySelector('.drop-zone')
 var volumeControl = document.querySelector('.volume-control');
 var stop = document.querySelector('.stop');
 var play = document.querySelector('.play');
+var fileName = document.querySelector('.playing-file-name');
 
 /// constant
 var WIDTH = 640;
@@ -31,8 +33,8 @@ var connectAudioNodes = function(){
 
 
 var setSound = function() {
-    if (soundBuffer) {
-        source.buffer = soundBuffer;
+    if (sound.buffer) {
+        source.buffer = sound.buffer;
         return true
     } else {
         alert("No audio file selected! Please select one.")
@@ -86,6 +88,7 @@ play.onclick = function () {
       source.start(0);
       requestAnimationFrame(draw);
       isPlaying = true;
+      fileName.innerHTML = sound.name;
       play.setAttribute('disabled', 'disabled');
       stop.removeAttribute('disabled');
     }
@@ -94,17 +97,20 @@ play.onclick = function () {
 stop.onclick = function () {
     source.stop(0);
     isPlaying = false;
+    fileName.innerHTML = "---";
     play.removeAttribute('disabled');
 }
 // file select and dragover functions
 var handleFileSelect = function (evt) {
     evt.stopPropagation();
     evt.preventDefault();
-    var files = evt.target.files || evt.dataTransfer.files
-    var file = files[0]
+    var files = evt.target.files || evt.dataTransfer.files;
+    var file = files[0];
+    var fileName = file.name;
 
     var onDecodeSuccess = function(buffer){
-      soundBuffer = buffer
+      sound.buffer = buffer
+      sound.name = file.name
     }
 
     var onDecodeError = function(){

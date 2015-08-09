@@ -2,15 +2,16 @@
     <head>
         <style>
             .drop-zone {
-            border: 2px dashed #bbb;
-            -moz-border-radius: 5px;
-            -webkit-border-radius: 5px;
-            border-radius: 5px;
-            padding: 25px;
-            text-align: center;
-            font: 20pt bold 'Vollkorn';
-            color: #bbb;
-            margin-bottom: 20px;
+              width: 640px;
+              border: 2px dashed #bbb;
+              -moz-border-radius: 5px;
+              -webkit-border-radius: 5px;
+              border-radius: 5px;
+              padding: 25px;
+              text-align: center;
+              font: 20pt bold 'Vollkorn';
+              color: #bbb;
+              margin-bottom: 20px;
             }
 
             .volume-control{
@@ -24,13 +25,17 @@
     <body>
         <h1>Simple web player</h1>
 
-        <h2>Input file</h2>
-        <div class="drop-zone">Drop files here</div>
+        <div class="drop-zone">Drop audio file here</div>
         <input class="file-input" type="file" id="input">
 
         <h2>Control buttons</h2>
         <button class="play">Play</button>
         <button class="stop" disabled>Stop</button>
+
+        <h2>
+          Now playing:
+          <span class="playing-file-name"> --- </span>
+        </h2>
 
         <canvas width="640" height="360"></canvas>
         <h2>Volume</h2>
